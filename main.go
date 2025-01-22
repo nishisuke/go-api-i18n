@@ -9,7 +9,7 @@ import (
 
 func main() {
 	http.HandleFunc("GET /greet/{name}", func(w http.ResponseWriter, r *http.Request) {
-		r = i18n.FirstAcceptLanguageRequest(r) // 実際はmiddlewareで行う
+		r = i18n.AcceptLanguageRequest(r) // 実際はmiddlewareで行う
 		ctx := r.Context()
 
 		name := r.PathValue("name")

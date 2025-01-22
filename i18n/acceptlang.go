@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-func FirstAcceptLanguageRequest(r *http.Request) *http.Request {
-	l := parseFirstAcceptLanguageTag(r.Header.Get("Accept-Language"))
+func AcceptLanguageRequest(r *http.Request) *http.Request {
+	l := parseAcceptLanguageTag(r.Header.Get("Accept-Language"))
 	ctx := LCIDContext(r.Context(), l)
 	return r.WithContext(ctx)
 }
 
-func parseFirstAcceptLanguageTag(v string) LCID {
+func parseAcceptLanguageTag(v string) LCID {
 	noSpace := strings.ReplaceAll(v, " ", "")
 	arr := strings.Split(noSpace, ",")
 
