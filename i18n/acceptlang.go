@@ -6,31 +6,38 @@ import (
 )
 
 func FirstAcceptLanguageRequest(r *http.Request) *http.Request {
-	s := parseFirstAcceptLanguageTag(r.Header.Get("Accept-Language"))
-	if s == "" {
-		return r
-	}
-
-	l := NewLCIDFromTag(s)
+	l := parseFirstAcceptLanguageTag(r.Header.Get("Accept-Language"))
 	ctx := LCIDContext(r.Context(), l)
 	return r.WithContext(ctx)
 }
 
-func parseFirstAcceptLanguageTag(v string) string {
+func parseFirstAcceptLanguageTag(v string) LCID {
 	noSpace := strings.ReplaceAll(v, " ", "")
 	arr := strings.Split(noSpace, ",")
 
-	var ret string
+	isAcceptAny := false
+	var ret LCID
 	for _, lang := range arr {
-		l := strings.SplitN(lang, ";", 2)[0]
-		if l != "*" {
+		tag := strings.SplitN(lang, ";", 2)[0]
+
+		l := NewLCIDFromTag(tag)
+		if _, ok := supportedLangs[l.Lang]; ok {
 			ret = l
 			break
 		}
+
+		if tag == "*" {
+			isAcceptAny = true
+		}
 	}
 
-	if ret == "" {
-		return defaultLang
+	if ret.Lang != "" {
+		return ret
 	}
-	return ret
+
+	if isAcceptAny {
+		return defaultLCID
+	}
+
+	return fallbackLCID
 }

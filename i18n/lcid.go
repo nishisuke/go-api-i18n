@@ -1,13 +1,21 @@
 package i18n
 
 import (
-	"context"
 	"strings"
 )
 
-const defaultLang = "ja"
+const jaLang = "ja"
+const enLang = "en"
+const defaultLang = jaLang
+const fallbackLang = enLang
 
-var fallbackLCID = LCID{defaultLang, "JP"}
+var supportedLangs = map[string]struct{}{
+	jaLang: {},
+	enLang: {},
+}
+
+var defaultLCID = LCID{defaultLang, "JP"}
+var fallbackLCID = LCID{enLang, "US"}
 
 type LCID struct {
 	Lang    string
@@ -28,24 +36,11 @@ func NewLCID(lang, country string) LCID {
 	country = strings.TrimSpace(country)
 
 	if lang == "" {
-		lang = defaultLang
+		lang = fallbackLang
 	}
 
 	return LCID{
 		Lang:    lang,
 		Country: country,
 	}
-}
-
-type lcidKey struct{}
-
-func lcid(ctx context.Context) LCID {
-	if lcid, ok := ctx.Value(lcidKey{}).(LCID); ok {
-		return lcid
-	}
-	return fallbackLCID
-}
-
-func LCIDContext(ctx context.Context, lcid LCID) context.Context {
-	return context.WithValue(ctx, lcidKey{}, lcid)
 }

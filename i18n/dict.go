@@ -12,7 +12,9 @@ func dict(lcid LCID) map[messageKey]string {
 	switch lcid.Lang {
 	case "en":
 		return enDict
-	default:
+	case "ja":
 		return jaDict
+	default:
+		panic("unsupported language")
 	}
 }
