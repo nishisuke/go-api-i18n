@@ -35,10 +35,6 @@ func NewLCID(lang, country string) LCID {
 	lang = strings.TrimSpace(lang)
 	country = strings.TrimSpace(country)
 
-	if lang == "" {
-		lang = fallbackLang
-	}
-
 	return LCID{
 		Lang:    lang,
 		Country: country,
